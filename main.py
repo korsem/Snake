@@ -31,6 +31,16 @@ class SNAKE:
         body_copy.insert(0, body_copy[0] + self.direction) # snake is moving by the direction
         self.body = body_copy[:]
 
+class MAIN:
+    def __init__(self):
+        self.snake = SNAKE()
+        self.fruit = FRUIT()
+    def update(self):
+        self.snake.move_snake()
+
+    def draw_elements(self):
+        self.fruit.draw_fruit()
+        self.snake.draw_snake()
 
 # setting up the window
 pygame.init()
@@ -55,6 +65,8 @@ snake = SNAKE()
 SCREEN_UPDATE = pygame.USEREVENT
 pygame.time.set_timer(SCREEN_UPDATE, 200) # in miliseconds
 
+main_game = MAIN()
+
 # main loop
 while True:
     for event in pygame.event.get(): # waiting for user input
@@ -62,18 +74,16 @@ while True:
             pygame.quit()
             exit()
         if event.type == SCREEN_UPDATE:
-            snake.move_snake()
+            main_game.update()
         if event.type == pygame.KEYDOWN: # keyboard controll
             if event.key == pygame.K_UP:
-                snake.direction = Vector2(0, -1)
+                main_game.snake.direction = Vector2(0, -1)
             elif event.key == pygame.K_DOWN:
-                snake.direction = Vector2(0, 1)
+                main_game.snake.direction = Vector2(0, 1)
             elif event.key == pygame.K_LEFT:
-                snake.direction = Vector2(-1, 0)
+                main_game.snake.direction = Vector2(-1, 0)
             elif event.key == pygame.K_RIGHT:
-                snake.direction = Vector2(1, 0)
-
-    fruit.draw_fruit()
-    snake.draw_snake()
+                main_game.snake.direction = Vector2(1, 0)
+    main_game.draw_elements()
     pygame.display.update()
     fps.tick(60)
