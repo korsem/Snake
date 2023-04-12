@@ -12,13 +12,29 @@ class FRUIT:
         self.y = random.randint(0, cell_number - 1)
         self.pos = Vector2(self.x,self.y)
 
-    def draw_fruit(self):
+    def draw_fruit(self): # actually fruit is croissant because croissants are yummy
         fruit_rect = pygame.Rect(int(self.pos.x * cell_size),int(self.pos.y * cell_size), cell_size, cell_size)
         screen.blit(snacky, fruit_rect)
     def randomize(self):
         self.x = random.randint(0, cell_number - 1)
         self.y = random.randint(0, cell_number - 1)
         self.pos = Vector2(self.x,self.y)
+
+class COFFEE: # snake likes coffee snake likes fast snack is even better with coffee
+    def __init__(self):
+        # starting position (i need to remember that it can be on the same place as fruit)
+        self.x = random.randint(0, cell_number - 1)
+        self.y = random.randint(0, cell_number - 1)
+        self.pos = Vector2(self.x,self.y)
+
+    def draw_coffee(self):
+        coffee_rect = pygame.Rect(int(self.pos.x * cell_size),int(self.pos.y * cell_size), cell_size, cell_size)
+        screen.blit(coffee, coffee_rect)
+    def randomize(self):
+        self.x = random.randint(0, cell_number - 1)
+        self.y = random.randint(0, cell_number - 1)
+        self.pos = Vector2(self.x,self.y)
+        # dziedziczenie ?
 
 class SNAKE:
     def __init__(self):
@@ -47,6 +63,7 @@ class MAIN:
     def __init__(self):
         self.snake = SNAKE()
         self.fruit = FRUIT()
+        self.boost = COFFEE()
     def update(self):
         self.snake.move_snake()
         self.check_collision()
@@ -54,16 +71,18 @@ class MAIN:
     def draw_elements(self):
         self.fruit.draw_fruit()
         self.snake.draw_snake()
+        self.boost.draw_coffee()
 
     def check_collision(self):
         if self.fruit.pos == self.snake.body[0]:
             self.fruit.randomize()
             self.snake.add_block()
-
+            # if rand == 0: rysuje snakea
+        #elif self.coffee.pos == self.snake.body[0]: jesli najade na coffee
+          #  przyspiesza czas na 15 sekund
     def game_over(self):
         pygame.quit()
         exit()
-        print("ups")
 
     def check_fail(self):
         if not (0 <= self.snake.body[0].x < cell_number and 0 <= self.snake.body[0].y < cell_number): # if snake's head hits the walls its game over
@@ -71,7 +90,6 @@ class MAIN:
         for element in self.snake.body[1:]: # if snake hits itself its game over
             if element == self.snake.body[0]:
                 self.game_over()
-
 
 
 # setting up the window
@@ -84,15 +102,21 @@ screen = pygame.display.set_mode((cell_size * cell_number, cell_number * cell_si
 pygame.display.set_caption("Snake")
 screen.fill((180, 215, 70))
 
-# loading my image and scaling it
+# loading my images and scaling them
 snacky = pygame.image.load('Graphics/croissant.png').convert_alpha()
 snacky = pygame.transform.scale(snacky, (cell_size, cell_size))
+
+coffee = pygame.image.load('Graphics/coffee.png').convert_alpha()
+coffee = pygame.transform.scale(coffee, (cell_size, cell_size))
 
 # How much frames per seconds
 fps = pygame.time.Clock()
 
 # fruit
 fruit = FRUIT()
+
+#coffee
+boost = COFFEE()
 
 # snake
 snake = SNAKE()
