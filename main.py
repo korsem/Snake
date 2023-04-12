@@ -7,7 +7,7 @@ import random
 
 class FRUIT:
     def __init__(self):
-        # pozycja startowa
+        # starting position
         self.x = random.randint(0, cell_number - 1)
         self.y = random.randint(0, cell_number - 1)
         self.pos = Vector2(self.x,self.y)
@@ -22,9 +22,9 @@ class FRUIT:
 
 class COFFEE: # snake likes coffee snake likes fast snack is even better with coffee
     def __init__(self):
-        # starting position (i need to remember that it can be on the same place as fruit)
-        self.x = random.randint(0, cell_number - 1)
-        self.y = random.randint(0, cell_number - 1)
+        # starting position of coffee is out of my area
+        self.x = cell_number
+        self.y = cell_number
         self.pos = Vector2(self.x,self.y)
 
     def draw_coffee(self):
@@ -34,7 +34,11 @@ class COFFEE: # snake likes coffee snake likes fast snack is even better with co
         self.x = random.randint(0, cell_number - 1)
         self.y = random.randint(0, cell_number - 1)
         self.pos = Vector2(self.x,self.y)
-        # dziedziczenie ?
+
+    def drunk(self):
+        self.x = cell_number
+        self.y = cell_number
+        self.pos = Vector2(self.x, self.y)
 
 class SNAKE:
     def __init__(self):
@@ -77,9 +81,20 @@ class MAIN:
         if self.fruit.pos == self.snake.body[0]:
             self.fruit.randomize()
             self.snake.add_block()
-            # if rand == 0: rysuje snakea
-        #elif self.coffee.pos == self.snake.body[0]: jesli najade na coffee
-          #  przyspiesza czas na 15 sekund
+
+            # it draws whether there will be a boost
+            draw = random.randint(0, 3) # 33% chance of a boost occuring
+            if draw == 0:
+                self.boost.randomize()
+
+        elif self.boost.pos == self.snake.body[0]:
+            self.boost.drunk()
+            #  przyspiesza czas na 15 sekund
+            start_time = pygame.time.get_ticks()
+            end_time = start_time + 15000  # 15 seconds in milliseconds
+            while pygame.time.get_ticks() < end_time:
+                pygame.time.set_timer(SCREEN_UPDATE, 400) # frame clock ustawic to powinno dzialac
+            pygame.time.set_timer(SCREEN_UPDATE, 200)
     def game_over(self):
         pygame.quit()
         exit()
