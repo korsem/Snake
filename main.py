@@ -14,7 +14,7 @@ class FRUIT:
 
     def draw_fruit(self):
         fruit_rect = pygame.Rect(int(self.pos.x * cell_size),int(self.pos.y * cell_size), cell_size, cell_size)
-        pygame.draw.rect(screen, (105, 0, 60), fruit_rect)
+        screen.blit(snacky, fruit_rect)
     def randomize(self):
         self.x = random.randint(0, cell_number - 1)
         self.y = random.randint(0, cell_number - 1)
@@ -80,9 +80,13 @@ pygame.init()
 cell_size = 35
 cell_number = 15
 
-screen = pygame.display.set_mode((cell_size * cell_number, cell_number*cell_size))
+screen = pygame.display.set_mode((cell_size * cell_number, cell_number * cell_size))
 pygame.display.set_caption("Snake")
 screen.fill((180, 215, 70))
+
+# loading my image and scaling it
+snacky = pygame.image.load('Graphics/croissant.png').convert_alpha()
+snacky = pygame.transform.scale(snacky, (cell_size, cell_size))
 
 # How much frames per seconds
 fps = pygame.time.Clock()
@@ -107,7 +111,7 @@ while True:
             exit()
         if event.type == SCREEN_UPDATE:
             main_game.update()
-        if event.type == pygame.KEYDOWN: # keyboard controll
+        if event.type == pygame.KEYDOWN: # keyboard control
             if event.key == pygame.K_UP and main_game.snake.direction.y != 1:
                 main_game.snake.direction = Vector2(0, -1)
             elif event.key == pygame.K_DOWN and main_game.snake.direction.y != -1:
