@@ -2,7 +2,7 @@
 import pygame
 from sys import exit
 from pygame.math import Vector2
-import time
+from math import floor
 import random
 
 class FRUIT:
@@ -26,6 +26,8 @@ class COFFEE: # snake likes coffee snake likes fast snack is even better with co
         self.x = cell_number
         self.y = cell_number
         self.pos = Vector2(self.x,self.y)
+        # wheter snake goes faaaast
+        self.speed = False
 
     def draw_coffee(self):
         coffee_rect = pygame.Rect(int(self.pos.x * cell_size),int(self.pos.y * cell_size), cell_size, cell_size)
@@ -40,28 +42,40 @@ class COFFEE: # snake likes coffee snake likes fast snack is even better with co
         self.y = cell_number
         self.pos = Vector2(self.x, self.y)
 
+
 class SNAKE:
     def __init__(self):
         # snake is stored in a list
         self.body = [Vector2(4, 7), Vector2(3, 7), Vector2(2,7)]
         self.direction = Vector2(1, 0) # default moves to the left
         self.new_block = False
+        # snake's speed
+        self.speed_multiplier = 1
+
     def draw_snake(self):
         for elements in self.body:
             snake_rect = pygame.Rect(int(elements.x * cell_size), int(elements.y * cell_size), cell_size, cell_size)
             pygame.draw.rect(screen, (170, 00, 60), snake_rect)
     def move_snake(self):
         if self.new_block == False:
-            body_copy = self.body[:-1] # without the last element
+            body_copy = self.body[:-(self.speed_multiplier)] # without the last element
         else:
             body_copy = self.body[:] # with the last element because snake has eaten the snack
             self.new_block = False
-        body_copy.insert(0, body_copy[0] + self.direction) # snake is moving by the direction
+        for i in range(self.speed_multiplier): # makes the snake faster
+            body_copy.insert(0, body_copy[0] + self.direction) # snake is moving by the direction
+
         self.body = body_copy[:]
         screen.fill((180, 215, 70)) # I need to think of a better way to update the screen (without that you can still see the "old" parts of the snake)
 
     def add_block(self):
         self.new_block = True
+
+    def fast(self):
+        if self.speed_multiplier == 1:
+            self.speed_multiplier = 2
+        else:
+            self.speed_multiplier = 1
 
 class MAIN:
     def __init__(self):
@@ -89,12 +103,7 @@ class MAIN:
 
         elif self.boost.pos == self.snake.body[0]:
             self.boost.drunk()
-            #  przyspiesza czas na 15 sekund
-            start_time = pygame.time.get_ticks()
-            end_time = start_time + 15000  # 15 seconds in milliseconds
-            while pygame.time.get_ticks() < end_time:
-                pygame.time.set_timer(SCREEN_UPDATE, 400) # frame clock ustawic to powinno dzialac
-            pygame.time.set_timer(SCREEN_UPDATE, 200)
+            self.snake.fast()
     def game_over(self):
         pygame.quit()
         exit()
@@ -162,3 +171,4 @@ while True:
     main_game.draw_elements()
     pygame.display.update()
     fps.tick(60)
+
