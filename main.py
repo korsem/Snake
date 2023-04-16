@@ -49,7 +49,7 @@ class SNAKE:
         self.direction = Vector2(1, 0) # default moves to the left
         self.new_block = False
         # snake's speed
-        self.speed_multiplier = 1
+        self.speed_multiplier = 1 # currently if snakes is faster it doesnt eat
         self.boost_duration = 10000  # 10 seconds in milliseconds
         self.boost_end_time = 0  # time at which the speed boost will end
 
@@ -66,7 +66,7 @@ class SNAKE:
             else:
                 body_copy = self.body[:-1]
             self.new_block = False
-        for i in range(self.speed_multiplier): # makes the snake faster
+        for i in range(self.speed_multiplier): # makes the snake faster but only in a straight line because it only can change direction after speed_multiplier number of moves
             body_copy.insert(0, body_copy[0] + self.direction) # snake is moving by the direction
 
         self.body = body_copy[:]
@@ -99,9 +99,10 @@ class MAIN:
         self.check_fail()
         self.snake.verify_speed()
     def draw_elements(self):
+        self.draw_grass()
+        self.boost.draw_coffee()
         self.fruit.draw_fruit()
         self.snake.draw_snake()
-        self.boost.draw_coffee()
 
     def check_collision(self):
         if self.fruit.pos == self.snake.body[0]:
@@ -112,7 +113,6 @@ class MAIN:
             draw = random.randint(0, 3) # 33% chance of a boost occuring
             if draw == 0:
                 self.boost.randomize()
-
         elif self.boost.pos == self.snake.body[0]:
             self.boost.drunk()
             self.snake.fast()
@@ -126,6 +126,19 @@ class MAIN:
         for element in self.snake.body[1:]: # if snake hits itself its game over
             if element == self.snake.body[0]:
                 self.game_over()
+    def draw_grass(self):
+        grass_color = (170, 200, 60)
+        for row in range(cell_size):
+            if row % 2 == 0:
+                for col in range(cell_number):
+                    if col % 2 == 0:
+                        grass_rect = pygame.Rect(col * cell_size, row * cell_size, cell_size, cell_size)
+                        pygame.draw.rect(screen, grass_color, grass_rect)
+            else:
+                for col in range(cell_number):
+                    if col % 2 == 1:
+                        grass_rect = pygame.Rect(col * cell_size, row * cell_size, cell_size, cell_size)
+                        pygame.draw.rect(screen, grass_color, grass_rect)
 
 
 # setting up the window
