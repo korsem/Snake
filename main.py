@@ -2,7 +2,6 @@
 import pygame
 from sys import exit
 from pygame.math import Vector2
-from math import floor
 import random
 
 class FRUIT:
@@ -51,6 +50,8 @@ class SNAKE:
         self.new_block = False
         # snake's speed
         self.speed_multiplier = 1
+        self.boost_duration = 10000  # 10 seconds in milliseconds
+        self.boost_end_time = 0  # time at which the speed boost will end
 
     def draw_snake(self):
         for elements in self.body:
@@ -59,8 +60,11 @@ class SNAKE:
     def move_snake(self):
         if self.new_block == False:
             body_copy = self.body[:-(self.speed_multiplier)] # without the last element
-        else:
-            body_copy = self.body[:] # with the last element because snake has eaten the snack
+        else: # i need to change this if
+            if self.speed_multiplier == 1:
+                body_copy = self.body[:] # with the last element because snake has eaten the snack
+            else:
+                body_copy = self.body[:-1]
             self.new_block = False
         for i in range(self.speed_multiplier): # makes the snake faster
             body_copy.insert(0, body_copy[0] + self.direction) # snake is moving by the direction
@@ -74,8 +78,15 @@ class SNAKE:
     def fast(self):
         if self.speed_multiplier == 1:
             self.speed_multiplier = 2
+            boost_start_time = pygame.time.get_ticks()  # record the time when the speed boost starts
+            self.boost_end_time = boost_start_time + self.boost_duration
         else:
             self.speed_multiplier = 1
+            self.boost_end_time = 0
+    def verify_speed(self): # if my snake has speed_multiplier == 2 i want it to get back to normal after certain time (10 seconds)
+        if self.speed_multiplier == 2 and pygame.time.get_ticks() >= self.boost_end_time:
+            self.fast()
+
 
 class MAIN:
     def __init__(self):
@@ -86,6 +97,7 @@ class MAIN:
         self.snake.move_snake()
         self.check_collision()
         self.check_fail()
+        self.snake.verify_speed()
     def draw_elements(self):
         self.fruit.draw_fruit()
         self.snake.draw_snake()
@@ -109,7 +121,7 @@ class MAIN:
         exit()
 
     def check_fail(self):
-        if not (0 <= self.snake.body[0].x < cell_number and 0 <= self.snake.body[0].y < cell_number): # if snake's head hits the walls its game over
+        if not (0 <= self.snake.body[0].x < cell_number and 0 <= self.snake.body[0].y < cell_number): # if snake's head hits the walls it is game over
             self.game_over()
         for element in self.snake.body[1:]: # if snake hits itself its game over
             if element == self.snake.body[0]:
