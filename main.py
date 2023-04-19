@@ -2,6 +2,7 @@
 import pygame
 from sys import exit
 from pygame.math import Vector2
+from math import floor
 import random
 
 class FRUIT:
@@ -103,6 +104,7 @@ class MAIN:
         self.boost.draw_coffee()
         self.fruit.draw_fruit()
         self.snake.draw_snake()
+        self.draw_score()
 
     def check_collision(self):
         if self.fruit.pos == self.snake.body[0]:
@@ -139,7 +141,20 @@ class MAIN:
                     if col % 2 == 1:
                         grass_rect = pygame.Rect(col * cell_size, row * cell_size, cell_size, cell_size)
                         pygame.draw.rect(screen, grass_color, grass_rect)
+    def draw_score(self):
+        score_text = ": "+str(len(self.snake.body)-3) # score is the number of snacks snake has eaten
+        score_surface = game_font.render(score_text, True, (80, 90, 12))
+        score_x = int(cell_size * cell_number - cell_size)
+        score_y = int(cell_size * cell_number - cell_size//2)
 
+        score_rect = score_surface.get_rect(center = (score_x, score_y))
+        snacky_rect = snacky.get_rect(midright = (score_rect.left, score_rect.centery))
+        bg_rect = pygame.Rect(snacky_rect.left, snacky_rect.top, snacky_rect.width + score_rect.width + 5, snacky_rect.height + score_rect.height)
+
+        pygame.draw.rect(screen, (165, 208, 80), bg_rect,2)
+        screen.blit(score_surface, score_rect)
+        screen.blit(snacky,snacky_rect)
+        pygame.draw.rect(screen, (80, 90, 12), bg_rect, 2) # frame over the score
 
 # setting up the window
 pygame.init()
@@ -157,6 +172,9 @@ snacky = pygame.transform.scale(snacky, (cell_size, cell_size))
 
 coffee = pygame.image.load('Graphics/coffee.png').convert_alpha()
 coffee = pygame.transform.scale(coffee, (cell_size, cell_size))
+
+# adding font
+game_font = pygame.font.Font(None, floor(cell_size * 0.7)) # None is default font
 
 # How much frames per seconds
 fps = pygame.time.Clock()
