@@ -48,7 +48,7 @@ class SNAKE:
         # snake is stored in a list
         self.body = [Vector2(4, 7), Vector2(3, 7), Vector2(2,7)]
         self.direction = Vector2(1, 0) # default moves to the left
-        self.new_block = False
+        self.new_block = False # if the new block will be added
         # snake's speed
         self.speed_multiplier = 1 # currently if snakes is faster it doesnt eat
         self.boost_duration = 10000  # 10 seconds in milliseconds
@@ -61,14 +61,15 @@ class SNAKE:
     def move_snake(self):
         if self.new_block == False:
             body_copy = self.body[:-(self.speed_multiplier)] # without the last element
-        else: # i need to change this if
-            if self.speed_multiplier == 1:
-                body_copy = self.body[:] # with the last element because snake has eaten the snack
-            else:
-                body_copy = self.body[:-1]
+        else: # if the new block will be added
+            body_copy = self.body[:] # with the last element because snake has eaten the snack
             self.new_block = False
-        for i in range(self.speed_multiplier): # makes the snake faster but only in a straight line because it only can change direction after speed_multiplier number of moves
-            body_copy.insert(0, body_copy[0] + self.direction) # snake is moving by the direction
+        body_copy.insert(0, body_copy[0] + self.direction) # snake is moving by the direction
+
+        if(self.speed_multiplier == 2): # but cant change direction after 1 block
+            self.body = body_copy[:]
+            main_game.check_collision()
+            body_copy.insert(0, body_copy[0] + self.direction)
 
         self.body = body_copy[:]
         screen.fill((180, 215, 70)) # I need to think of a better way to update the screen (without that you can still see the "old" parts of the snake)
