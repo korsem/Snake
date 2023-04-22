@@ -10,8 +10,5 @@ https://youtu.be/QFvqStqPCRU
 
 Snake game has the basic snake game logic, only instead of an apple there is a croissant ;) (because who doesn't like a good croissant? Snake for sure does). </br> Addictionally, there is a boost in the shape of coffee. After coffee snake moves faster for 10 seconds.
 
-# to be done
-Most important is boost fix </br>
-
 # ideas
 Snake's design and adding background sound / music. </br> There could be also scoring system changed with an addictional boosts.
